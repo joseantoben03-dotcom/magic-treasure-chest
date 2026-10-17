@@ -45,6 +45,7 @@ export const Story = () => {
 
   const [ch2Quiz1, setCh2Quiz1] = useState(false);
   const [ch2Quiz2, setCh2Quiz2] = useState(false);
+  const [ch2Quiz3, setCh2Quiz3] = useState(false);
 
   const [ch3BugsDone, setCh3BugsDone] = useState(false);
   const [ch3Quiz1, setCh3Quiz1] = useState(false);
@@ -65,7 +66,7 @@ export const Story = () => {
   if (pageNum === 1) {
     canProceed = ch1Quiz1 && ch1Quiz2;
   } else if (pageNum === 2) {
-    canProceed = ch2Quiz1 && ch2Quiz2;
+    canProceed = ch2Quiz1 && ch2Quiz2 && ch2Quiz3;
   } else if (pageNum === 3) {
     canProceed = ch3Quiz1 && ch3Quiz2;
   } else if (pageNum === 4) {
@@ -273,21 +274,33 @@ export const Story = () => {
                           <span>📜 SLY HOLDS A GLOWING PARCHMENT:</span>
                         </div>
                         <p style={{ margin: '0 0 10px 0' }}>
-                          "Holy goblin ears! Look what the Wizard left behind on the table!"
+                          "Holy goblin ears! Look what the Wizard left behind on his desk — an ancient blueprint!"
                         </p>
                         <p style={{ margin: '0 0 10px 0' }}>
-                          "It's a parchment inscribed with magic symbols! It says: <em>'Every treasure is bound to a secret sticker (the KEY). Whisper the sticker name, and the chest reveals its drawer (the VALUE) instantly!'</em>"
+                          "It explains the secret of this 1,000-drawer chest: Every drawer has a sticker label (the <strong>KEY</strong>). Inside is the treasure (the <strong>VALUE</strong>)."
                         </p>
                         <p style={{ margin: 0 }}>
-                          "No searching! No clattering! The Hashmap teleports directly to the target drawer in exactly ONE step — O(1) instant speed!"
+                          "And best of all? The Wizard built a magical <strong>Hash Machine</strong> that converts any sticker name directly into its drawer number in 0.0001 seconds! No searching, no waking the dog!"
                         </p>
+                      </div>
+
+                      {/* Old vs New comparison */}
+                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '20px' }}>
+                        <div style={{ background: 'rgba(255,46,147,0.08)', border: '1px solid rgba(255,46,147,0.3)', borderRadius: '12px', padding: '14px', textAlign: 'center' }}>
+                          <div style={{ fontSize: '1.5rem', marginBottom: '6px' }}>🐢 Linear Search O(N)</div>
+                          <div style={{ color: '#ffb3d9', fontSize: '0.88rem', lineHeight: '1.5' }}>Check every drawer one by one.<br /><em>Could take 1,000 pulls! Dog wakes up!</em></div>
+                        </div>
+                        <div style={{ background: 'rgba(0,240,255,0.08)', border: '1px solid rgba(0,240,255,0.3)', borderRadius: '12px', padding: '14px', textAlign: 'center' }}>
+                          <div style={{ fontSize: '1.5rem', marginBottom: '6px' }}>⚡ Hashmap O(1)</div>
+                          <div style={{ color: '#B5F8FF', fontSize: '0.88rem', lineHeight: '1.5' }}>Feed key to Hash Machine ➡️ Drawer number!<br /><em>Always exactly 1 step! Dog stays asleep!</em></div>
+                        </div>
                       </div>
 
                       <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '24px' }}>
                         <div style={{ background: 'rgba(0, 240, 255, 0.06)', border: '1px solid rgba(0, 240, 255, 0.25)', borderRadius: '14px', padding: '14px 18px', color: '#D8F8FF', fontSize: '0.95rem', display: 'flex', alignItems: 'flex-start', gap: '10px' }}>
                           <Globe size={18} color="var(--secondary)" style={{ flexShrink: 0, marginTop: '2px' }} />
                           <div>
-                            <strong style={{ color: 'var(--secondary)' }}>Real-World Connection:</strong> Looking up an Instagram profile by handle, or using a library catalog code to walk straight to the right bookshelf.
+                            <strong style={{ color: 'var(--secondary)' }}>Real-World Connection:</strong> Searching a phone contact by name (e.g. "Mom"). Your phone doesn't dial 2 billion strangers — it instantly jumps straight to Mom's number!
                           </div>
                         </div>
 
@@ -295,7 +308,7 @@ export const Story = () => {
                           <div style={{ background: 'rgba(138, 43, 226, 0.12)', border: '1px solid rgba(138, 43, 226, 0.35)', borderRadius: '14px', padding: '14px 18px', color: '#E6D3FF', fontSize: '0.9rem', fontFamily: 'monospace', display: 'flex', alignItems: 'flex-start', gap: '10px' }}>
                             <Terminal size={18} color="#D4AAFF" style={{ flexShrink: 0, marginTop: '2px' }} />
                             <div>
-                              <strong style={{ color: '#D4AAFF' }}>NERD MODE:</strong> Hash tables convert keys to integer array indices via a hash function, allowing O(1) amortized lookup, insertion, and deletion.
+                              <strong style={{ color: '#D4AAFF' }}>NERD MODE:</strong> A Hash Table maps keys to bucket indices via a hash function: <code>index = hash(key) % capacity</code>. This gives O(1) amortized lookup, insertion, and deletion.
                             </div>
                           </div>
                         )}
@@ -306,7 +319,7 @@ export const Story = () => {
                         onClick={() => handleTabSwitch('lab')}
                         style={{ width: '100%', padding: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px', fontSize: '1.05rem', background: 'linear-gradient(135deg, var(--secondary), var(--primary))', color: '#000' }}
                       >
-                        Launch Race Mode & Hash Visualizer ⚡ <ArrowRight size={18} />
+                        Enter Step-by-Step Hashmap Lab ⚙️ <ArrowRight size={18} />
                       </button>
                     </>
                   )}
@@ -466,16 +479,14 @@ export const Story = () => {
                 <div>
                   <div style={{ background: 'rgba(0,0,0,0.3)', borderRadius: '16px', padding: '16px 20px', marginBottom: '20px', border: '1px solid rgba(255,255,255,0.08)' }}>
                     <h3 style={{ color: 'var(--secondary)', margin: '0 0 6px 0', fontSize: '1.15rem' }}>
-                      ⚡ Race Mode & Hash Visualizer Lab
+                      ⚡ Chapter 2 Lab: Master the Hashmap
                     </h3>
                     <p style={{ color: 'var(--text-muted)', margin: 0, fontSize: '0.92rem' }}>
-                      Race Sly Searcher against Sly Wizard, and experiment with word hashes and collision chaining below!
+                      Follow Sly through 8 tiny story scenes. In each one you tap or click to learn one small idea: letters to numbers, adding, wrapping into drawers, hiding a treasure, finding it again, and what happens in a collision.
                     </p>
                   </div>
 
-                  <RaceMode />
-                  <div style={{ height: '24px' }} />
-                  <HashVisualizer />
+                  <HashVisualizer onComplete={() => handleTabSwitch('quiz')} />
 
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '25px', flexWrap: 'wrap', gap: '14px' }}>
                     <button 
@@ -706,6 +717,30 @@ export const Story = () => {
                         'Because it opens the target drawer instantly in 1 step, the dog hears nothing!'
                       ]}
                       onPassed={() => setCh2Quiz2(true)}
+                    />
+                  )}
+
+                  {ch2Quiz2 && (
+                    <QuizCard
+                      id="ch2-q3"
+                      question="Sly uses the 3-step recipe on the word 'cat' (c=3, a=1, t=20) with 10 drawers. Which drawer does he open?"
+                      options={[
+                        'Drawer #4, because 3 + 1 + 20 = 24 and 24 wraps around to 4',
+                        'Drawer #24, because that is the total',
+                        'He has to open all 10 drawers to check'
+                      ]}
+                      correctAnswer="Drawer #4, because 3 + 1 + 20 = 24 and 24 wraps around to 4"
+                      explanations={{
+                        'Drawer #4, because 3 + 1 + 20 = 24 and 24 wraps around to 4': 'Exactly! Letters to numbers, add them up, then wrap with the remainder (24 % 10 = 4). Three steps, no searching.',
+                        'Drawer #24, because that is the total': 'There is no drawer #24! Step 3 wraps the total back into the 10 drawers by keeping only the remainder.',
+                        'He has to open all 10 drawers to check': 'That is the slow way. The recipe tells him the exact drawer, so he opens just one.'
+                      }}
+                      hints={[
+                        'Remember the 3 steps: letters to numbers, add them up, wrap into the drawers.',
+                        'The total is 24. How many full laps of 10 drawers fit in 24, and what is left over?',
+                        '24 is 2 full laps (20) plus 4 left over, so the answer is drawer #4.'
+                      ]}
+                      onPassed={() => setCh2Quiz3(true)}
                     />
                   )}
                 </>

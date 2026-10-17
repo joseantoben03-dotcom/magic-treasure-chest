@@ -6,6 +6,13 @@ An interactive, story-driven educational web game that teaches **Hashmaps (Dicti
 
 ---
 
+## 🌐 Live Deployed Application
+
+- **Live URL:** **[https://frontend-rouge-two-47n470mp71.vercel.app](https://frontend-rouge-two-47n470mp71.vercel.app)**
+- **Play Chapter 1 Directly:** **[https://frontend-rouge-two-47n470mp71.vercel.app/story/1](https://frontend-rouge-two-47n470mp71.vercel.app/story/1)**
+
+---
+
 ## 🌟 Key Features & Game Systems
 
 1. **Persistent Dog Wake Meter:**
@@ -29,7 +36,7 @@ An interactive, story-driven educational web game that teaches **Hashmaps (Dicti
    - Friendly, constructive feedback explaining *why* a choice is wrong.
 
 4. **Simple Mode vs. Nerd Mode:**
-   - **Simple Mode**: Kid-friendly metaphors, "Explain like I'm 10" callouts, and real-world analogies (contacts, dictionary index, menus).
+   - **Simple Mode**: Intuitive metaphors and real-world analogies (contacts, library index, menus).
    - **Nerd Mode**: Formal computer science terms (hash function, buckets, collisions, chaining, amortized $O(1)$).
 
 5. **Audio & Celebration System:**
