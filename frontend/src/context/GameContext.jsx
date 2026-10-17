@@ -6,7 +6,7 @@ const GameContext = createContext(null);
 export const BADGES_DATA = {
   slow_poke: {
     id: 'slow_poke',
-    title: 'Slow Poke',
+    title: 'Patient Thief',
     chapter: 1,
     icon: '🐢',
     desc: 'Survives sequential search through 1,000 drawers without getting eaten!'

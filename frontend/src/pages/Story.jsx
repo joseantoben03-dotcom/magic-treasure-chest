@@ -482,7 +482,7 @@ export const Story = () => {
                       ⚡ Chapter 2 Lab: Master the Hashmap
                     </h3>
                     <p style={{ color: 'var(--text-muted)', margin: 0, fontSize: '0.92rem' }}>
-                      Follow Sly through 8 tiny story scenes. In each one you tap or click to learn one small idea: letters to numbers, adding, wrapping into drawers, hiding a treasure, finding it again, and what happens in a collision.
+                      Follow Sly through 9 tiny story scenes. In each one you tap or click to learn one small idea: letters to numbers, adding, wrapping into drawers, the magic formula that joins them, hiding a treasure, finding it again, and what happens in a collision.
                     </p>
                   </div>
 
@@ -733,7 +733,7 @@ export const Story = () => {
                       explanations={{
                         'Drawer #4, because 3 + 1 + 20 = 24 and 24 wraps around to 4': 'Exactly! Letters to numbers, add them up, then wrap with the remainder (24 % 10 = 4). Three steps, no searching.',
                         'Drawer #24, because that is the total': 'There is no drawer #24! Step 3 wraps the total back into the 10 drawers by keeping only the remainder.',
-                        'He has to open all 10 drawers to check': 'That is the slow way. The recipe tells him the exact drawer, so he opens just one.'
+                        'He has to open all 10 drawers to check': 'That is the long way. The recipe tells him the exact drawer, so he opens just one.'
                       }}
                       hints={[
                         'Remember the 3 steps: letters to numbers, add them up, wrap into the drawers.',
@@ -760,7 +760,7 @@ export const Story = () => {
                     correctAnswer="{ } (Curly brackets)"
                     explanations={{
                       '{ } (Curly brackets)': 'Correct! Curly brackets { } create dictionaries and sets.',
-                      '[ ] (Square brackets)': 'Square brackets [ ] create Lists (Arrays), which search slowly O(N)!',
+                      '[ ] (Square brackets)': 'Square brackets [ ] create Lists (Arrays), which must be searched one by one, O(N)!',
                       '( ) (Parentheses / Round brackets)': 'Round brackets ( ) create Tuples or call functions.'
                     }}
                     hints={[

@@ -34,6 +34,7 @@ const SCENES = [
   { title: 'The Letter Scroll', img: '/sly_reading.png' },
   { title: 'The Adding Pot', img: '/sly_reading.png' },
   { title: 'The Wrap-Around Walk', img: '/sly_searching.png' },
+  { title: 'The Magic Formula', img: '/sly_reading.png' },
   { title: 'Hide a Treasure', img: '/sly_finding.png' },
   { title: 'Find It Again', img: '/sly_finding.png' },
   { title: 'Oops! Two in One Drawer', img: '/sly_searching.png' },
@@ -148,6 +149,34 @@ const LetterTiles = ({ letters, showValues = true, activeIndex = -1 }) => (
     ))}
   </div>
 );
+
+/* The formula, always visible. `highlight` lights up the part being taught: 1 letters, 2 adding, 3 wrapping */
+const FormulaCard = ({ highlight = 0 }) => {
+  const dim = (k) => (highlight === 0 || highlight === k ? 1 : 0.25);
+  return (
+    <div style={{ background: 'rgba(242,201,76,0.07)', border: '1px solid var(--accent)', borderRadius: '14px', padding: '12px 16px', marginBottom: '18px', textAlign: 'center' }}>
+      <div style={{ fontSize: '0.72rem', color: 'var(--accent)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '6px' }}>
+        📐 The Magic Formula (the same one all chapter)
+      </div>
+      <div style={{ fontFamily: 'monospace', fontSize: '1.25rem', color: '#fff', lineHeight: 1.7 }}>
+        <span style={{ color: 'var(--success)' }}>drawer</span> = ({' '}
+        <span style={{ color: 'var(--secondary)', opacity: dim(1) }}>letter₁</span>{' '}
+        <span style={{ color: 'var(--accent)', opacity: dim(2) }}>+ letter₂ + letter₃ + …</span> ){' '}
+        <span style={{ color: 'var(--primary)', opacity: dim(3) }}>% 10</span>
+      </div>
+      <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)', marginTop: '2px' }}>
+        In words: turn each letter into a number, add them all up, then keep only what is left over after full laps of the 10 drawers.
+      </div>
+    </div>
+  );
+};
+
+const FORMULA_PIECES = [
+  { id: 'drawer', label: 'drawer', color: 'var(--success)', title: '"drawer" is the answer we are hunting for', text: 'This is the number of the drawer Sly must open. We do not know it yet. Everything on the right side of the "=" sign calculates it for us, so nobody has to search.' },
+  { id: 'letters', label: 'letter₁ + letter₂ …', color: 'var(--secondary)', title: 'letter₁, letter₂ … are the letter numbers', text: 'Every letter has a number on the Letter Scroll (a = 1, b = 2 … z = 26). A 3-letter word has 3 of these numbers and a 5-letter word has 5. For "cat" they are 3, 1 and 20.' },
+  { id: 'plus', label: '( … + … )', color: 'var(--accent)', title: 'The + signs and the ( ) brackets', text: 'Every + means "add". The brackets ( ) mean "do this part FIRST". So we add all the letter numbers into ONE total: 3 + 1 + 20 = 24.' },
+  { id: 'mod', label: '% 10', color: 'var(--primary)', title: '% 10 means "what is left over after full laps of 10"', text: 'Here % does NOT mean percent. It means "remainder". The 10 is simply how many drawers the chest has. Divide the total by 10, forget the full laps, keep the leftover: 24 ÷ 10 = 2 full laps and 4 left over, so 24 % 10 = 4. Easy shortcut for a 10-drawer chest: the answer is just the LAST DIGIT of the total (24 → 4, 58 → 8, 75 → 5). A chest with 1,000 drawers would use % 1000 instead.' }
+];
 
 const doneBadge = (text) => (
   <div style={{ background: 'rgba(0,255,163,0.12)', border: '1px solid var(--success)', borderRadius: '12px', padding: '12px 16px', color: '#D4FFEA', fontSize: '0.92rem', lineHeight: 1.6, marginBottom: '16px' }}>
@@ -342,7 +371,7 @@ const SceneAdd = ({ img, onDone, nerdMode }) => {
         doneBadge(`Step 2 done! 3 + 1 + 20 = ${sum}. The word "cat" has become the single number ${sum}.`)}
 
       <NerdNote show={nerdMode}>
-        Real hash functions don't just add (that would make "cat" and "act" identical, as you'll see in Scene 7!). They multiply and shuffle bits as they go, which spreads words around much more evenly.
+        Real hash functions don't just add (that would make "cat" and "act" identical, as you'll see in Scene 8!). They multiply and shuffle bits as they go, which spreads words around much more evenly.
       </NerdNote>
     </div>
   );
@@ -411,7 +440,130 @@ const SceneWrap = ({ img, onDone, nerdMode }) => {
 };
 
 /* ======================================================================
-   SCENE 5 — Your turn: hide a treasure (all 3 steps, one button each)
+   SCENE 5 — The Magic Formula, explained piece by piece
+   ====================================================================== */
+const SceneFormula = ({ img, onDone, nerdMode }) => {
+  const { playClick, playSuccess, playWrong } = useSoundFX();
+  const [seen, setSeen] = useState([]);
+  const [current, setCurrent] = useState(null);
+  const [answer, setAnswer] = useState('');
+  const [solved, setSolved] = useState(false);
+  const [wrong, setWrong] = useState(false);
+  const dog = hashWord('dog');
+  const allSeen = seen.length === FORMULA_PIECES.length;
+  const piece = FORMULA_PIECES.find((p) => p.id === current);
+
+  const open = (id) => {
+    playClick();
+    setCurrent(id);
+    if (!seen.includes(id)) setSeen([...seen, id]);
+  };
+
+  const check = () => {
+    if (parseInt(answer, 10) === dog.drawer) {
+      playSuccess();
+      setSolved(true);
+      setWrong(false);
+      onDone();
+    } else {
+      playWrong();
+      setWrong(true);
+    }
+  };
+
+  return (
+    <div>
+      <Sly img={img}>
+        <Say>"Nice work! You know all 3 steps. Now let's squash them into <strong>ONE line</strong>. That line is called a <strong>formula</strong>. A formula is just a recipe written with symbols so it is short."</Say>
+        <Say>"Look at the formula card above. It looks scary, but it has only <strong>4 pieces</strong>. Tap each coloured piece below and I'll tell you what it means."</Say>
+      </Sly>
+
+      <Panel>
+        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', justifyContent: 'center', marginBottom: '14px' }}>
+          {FORMULA_PIECES.map((p) => {
+            const isSeen = seen.includes(p.id);
+            return (
+              <button
+                key={p.id}
+                onClick={() => open(p.id)}
+                style={{
+                  padding: '10px 16px',
+                  borderRadius: '10px',
+                  cursor: 'pointer',
+                  fontFamily: 'monospace',
+                  fontSize: '1rem',
+                  fontWeight: 800,
+                  color: p.color,
+                  background: current === p.id ? 'rgba(255,255,255,0.14)' : 'rgba(255,255,255,0.05)',
+                  border: `2px ${isSeen ? 'solid' : 'dashed'} ${p.color}`
+                }}
+              >
+                {isSeen ? '✓ ' : ''}{p.label}
+              </button>
+            );
+          })}
+        </div>
+
+        {piece ? (
+          <div style={{ background: 'rgba(0,0,0,0.35)', borderLeft: `4px solid ${piece.color}`, borderRadius: '0 10px 10px 0', padding: '14px 16px', color: '#fff', lineHeight: 1.7 }}>
+            <strong style={{ color: piece.color }}>{piece.title}</strong>
+            <div style={{ color: '#D8F8FF', fontSize: '0.95rem', marginTop: '6px' }}>{piece.text}</div>
+          </div>
+        ) : (
+          <div style={{ color: 'var(--text-muted)', textAlign: 'center', fontSize: '0.9rem' }}>👆 Tap a piece to read what it means ({seen.length}/{FORMULA_PIECES.length} read)</div>
+        )}
+      </Panel>
+
+      <Panel>
+        <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: '8px' }}>Worked example with "cat"</div>
+        <div style={{ fontFamily: 'monospace', fontSize: '1.05rem', lineHeight: 2, color: '#fff', whiteSpace: 'pre', overflowX: 'auto' }}>
+          <div><span style={{ color: 'var(--success)' }}>drawer</span> = ( <span style={{ color: 'var(--secondary)' }}>3</span> <span style={{ color: 'var(--accent)' }}>+ 1 + 20</span> ) <span style={{ color: 'var(--primary)' }}>% 10</span></div>
+          <div>{'       '}= <span style={{ color: 'var(--accent)' }}>24</span> <span style={{ color: 'var(--primary)' }}>% 10</span>{'          '}<span style={{ color: 'var(--text-muted)' }}>← add first (brackets)</span></div>
+          <div>{'       '}= <strong style={{ color: 'var(--success)' }}>4</strong>{'                '}<span style={{ color: 'var(--text-muted)' }}>← 2 full laps, 4 left over</span></div>
+        </div>
+      </Panel>
+
+      {allSeen && (
+        <Panel style={{ border: '1px solid var(--secondary)' }}>
+          <div style={{ color: 'var(--secondary)', fontWeight: 800, marginBottom: '6px' }}>🧪 Now you try! Word: "dog"</div>
+          <div style={{ fontFamily: 'monospace', color: '#fff', marginBottom: '10px' }}>
+            d = {dog.letters[0].value}, o = {dog.letters[1].value}, g = {dog.letters[2].value}<br />
+            drawer = ( {dog.letters.map((l) => l.value).join(' + ')} ) % 10 = <strong>?</strong>
+          </div>
+          <div style={{ display: 'flex', gap: '8px', alignItems: 'center', flexWrap: 'wrap' }}>
+            <input
+              type="number"
+              className="web3-input"
+              value={answer}
+              onChange={(e) => { setAnswer(e.target.value); setWrong(false); }}
+              placeholder="Which drawer?"
+              disabled={solved}
+              style={{ width: '150px', fontSize: '1.1rem' }}
+            />
+            <button className="web3-button" onClick={check} disabled={solved || answer === ''} style={{ padding: '10px 20px' }}>
+              Check my answer
+            </button>
+          </div>
+          {wrong && (
+            <div style={{ marginTop: '10px', color: '#FFD0D0', fontSize: '0.9rem', lineHeight: 1.6 }}>
+              Not yet. Do the brackets first: 4 + 15 + 7 = {dog.sum}. Then ask: how many full laps of 10 fit in {dog.sum}, and what is left over? (Shortcut: look at the last digit.)
+            </div>
+          )}
+        </Panel>
+      )}
+
+      {solved &&
+        doneBadge(`Correct! 4 + 15 + 7 = ${dog.sum}, and ${dog.sum} % 10 = ${dog.drawer}. You can now read and use the formula yourself. Every hashmap is built on exactly this idea.`)}
+
+      <NerdNote show={nerdMode}>
+        In code this is <code>index = hash(key) % table_size</code>. Here hash(key) is "add up the letter numbers" and table_size is 10.
+      </NerdNote>
+    </div>
+  );
+};
+
+/* ======================================================================
+   SCENE 6 — Your turn: hide a treasure (all 3 steps, one button each)
    ====================================================================== */
 const QUICK_WORDS = ['star', 'heart', 'skull', 'crown', 'gem', 'magic'];
 
@@ -519,7 +671,7 @@ const SceneStore = ({ img, onDone, stored, setStored, registerWord }) => {
       {justStored &&
         doneBadge(
           justStored.crowded.length > 0
-            ? `"${justStored.word}" is now in drawer #${justStored.drawer}... but "${justStored.crowded.join(', ')}" was already there! Two words, one drawer. Don't panic, Scene 7 explains it. For now, try another word, or continue.`
+            ? `"${justStored.word}" is now in drawer #${justStored.drawer}... but "${justStored.crowded.join(', ')}" was already there! Two words, one drawer. Don't panic, Scene 8 explains it. For now, try another word, or continue.`
             : `"${justStored.word}" is hidden in drawer #${justStored.drawer}. Hide a few more words if you like, or continue to find it again.`
         )}
     </div>
@@ -856,6 +1008,9 @@ export const HashVisualizer = ({ onComplete }) => {
         })}
       </div>
 
+      {/* The formula stays on screen from scene 2 onward */}
+      {scene >= 1 && <FormulaCard highlight={scene === 1 ? 1 : scene === 2 ? 2 : scene === 3 ? 3 : 0} />}
+
       {/* Scene body */}
       <AnimatePresence mode="wait">
         <motion.div
@@ -869,14 +1024,15 @@ export const HashVisualizer = ({ onComplete }) => {
           {scene === 1 && <SceneLetters {...common} onDone={() => markDone(1)} />}
           {scene === 2 && <SceneAdd {...common} onDone={() => markDone(2)} />}
           {scene === 3 && <SceneWrap {...common} onDone={() => markDone(3)} />}
-          {scene === 4 && (
-            <SceneStore {...common} stored={stored} setStored={setStored} registerWord={registerVisualizerWord} onDone={() => markDone(4)} />
-          )}
+          {scene === 4 && <SceneFormula {...common} onDone={() => markDone(4)} />}
           {scene === 5 && (
-            <SceneFind {...common} stored={stored} registerWord={registerVisualizerWord} onDone={() => markDone(5)} />
+            <SceneStore {...common} stored={stored} setStored={setStored} registerWord={registerVisualizerWord} onDone={() => markDone(5)} />
           )}
-          {scene === 6 && <SceneCollision {...common} onDone={() => markDone(6)} />}
-          {scene === 7 && <SceneRecap {...common} onComplete={onComplete} />}
+          {scene === 6 && (
+            <SceneFind {...common} stored={stored} registerWord={registerVisualizerWord} onDone={() => markDone(6)} />
+          )}
+          {scene === 7 && <SceneCollision {...common} onDone={() => markDone(7)} />}
+          {scene === 8 && <SceneRecap {...common} onComplete={onComplete} />}
         </motion.div>
       </AnimatePresence>
 
